@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Algorithmus Analyse-Suite</title>
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+<main>
+  <section class="section">
+    <div class="viz-header">
+      <div>
+        <h2>Visualizer</h2>
+        <p>Starte den Vergleich, beobachte Sortierschritte und vergleiche die Laufzeiten der Algorithmen.</p>
+      </div>
+      <div class="viz-controls">
+        <label for="bar-count">Anzahl Balken</label>
+        <input id="bar-count" type="range" min="8" max="64" value="24" />
+        <label for="delay-scale">Animationsgeschwindigkeit</label>
+        <input id="delay-scale" type="range" min="25" max="200" step="5" value="100" />
+        <p class="control-hint" id="delay-label">Tempo: 100%</p>
+        <div class="control-actions">
+          <button class="btn outline small" id="btn-randomize">Neue Daten</button>
+          <button class="btn primary small" id="btn-run">Vergleich starten</button>
+        </div>
+      </div>
+    </div>
+    <div class="viz-grid">
+      <div class="viz-row">
+        {% for algo in [("bubble", "Bubble Sort", "O(n2)"), ("insertion", "Insertion Sort", "O(n2)"), ("merge", "Merge Sort", "O(n log n)")] %}
+        <article class="viz-card" data-algo="{{ algo[0] }}">
+          <header><h3>{{ algo[1] }}</h3><span class="pill">{{ algo[2] }}</span></header>
+          <div class="viz-canvas" id="canvas-{{ algo[0] }}"></div>
+          <footer>
+            <p class="viz-meta">Laufzeit: <span class="viz-time" data-target="{{ algo[0] }}">-</span></p>
+            <button class="btn ghost small viz-replay" data-algo="{{ algo[0] }}" type="button">Replay</button>
+          </footer>
+        </article>
+        {% endfor %}
+      </div>
+      <div class="viz-row">
+        {% for algo in [("selection", "Selection Sort", "O(n2)"), ("quick", "Quick Sort", "O(n log n)"), ("heap", "Heap Sort", "O(n log n)")] %}
+        <article class="viz-card" data-algo="{{ algo[0] }}">
+          <header><h3>{{ algo[1] }}</h3><span class="pill">{{ algo[2] }}</span></header>
+          <div class="viz-canvas" id="canvas-{{ algo[0] }}"></div>
+          <footer>
+            <p class="viz-meta">Laufzeit: <span class="viz-time" data-target="{{ algo[0] }}">-</span></p>
+            <button class="btn ghost small viz-replay" data-algo="{{ algo[0] }}" type="button">Replay</button>
+          </footer>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Sortierverfahren &amp; Formeln</h2>
+    <p>Rekurrenzgleichungen und Komplexitaeten der sechs Verfahren im direkten Vergleich.</p>
+    <div class="viz-grid formula-grid">
+      {% set formulas = [
+        ("Bubble Sort", "O(n2)", "Vergleicht benachbarte Elemente iterativ und tauscht, bis keine Vertauschungen mehr noetig sind.", "T(n) = T(n-1) + (n-1)"),
+        ("Insertion Sort", "O(n2)", "Fuegt jedes Element an der richtigen Stelle in den bereits sortierten Teil ein.", "T(n) = sum k = n(n-1)/2"),
+        ("Merge Sort", "O(n log n)", "Teilt das Array rekursiv in Haelften und fuegt die sortierten Teilarrays zusammen.", "T(n) = 2*T(n/2) + n"),
+        ("Selection Sort", "O(n2)", "Sucht pro Durchlauf das Minimum des unsortierten Bereichs.", "T(n) = sum (n-k)"),
+        ("Quick Sort", "avg. O(n log n)", "Partitioniert um ein Pivot, sodass kleinere Elemente links landen.", "T(n) = T(k) + T(n-k-1) + n"),
+        ("Heap Sort", "O(n log n)", "Baut einen Max-Heap auf und entnimmt wiederholt das Maximum.", "T(n) = O(n) + n*log n"),
+      ] %}
+      {% for name, complexity, desc, formula in formulas %}
+      <article class="viz-card formula-card">
+        <header><h3>{{ name }}</h3><span class="pill">{{ complexity }}</span></header>
+        <p>{{ desc }}</p>
+        <p class="formula">{{ formula }}</p>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+</main>
+<script src="{{ url_for('static', filename='js/visualizer.js') }}" defer></script>
+</body>
+</html>
